@@ -1,0 +1,276 @@
+@import "tailwindcss";
+
+/* Palette sampled from the Placement Prep by Hru's logo. */
+:root {
+  color-scheme: light;
+  --background: #f8f4ee;
+  --foreground: #15191e;
+  --card: #fffdf9;
+  --muted: #72665d;
+  --line: #e5d4c6;
+  --brand: #c98256;
+  --brand-strong: #9f5d37;
+  --mint: #e9c2a4;
+  --amber: #d89a6a;
+  --danger: #d95f65;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-violet-50: #fff8f2;
+  --color-violet-100: #f8e1d1;
+  --color-violet-200: #efc6a8;
+  --color-violet-300: #e1aa80;
+  --color-violet-400: #d28f61;
+  --color-violet-500: var(--brand);
+  --color-violet-600: var(--brand-strong);
+  --color-violet-700: #824727;
+  --color-violet-800: #60351f;
+  --color-violet-900: #422619;
+  --color-indigo-400: #dfa77e;
+  --color-indigo-600: #8f5233;
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #0c1116;
+  --foreground: #f7f1e9;
+  --card: #151b20;
+  --muted: #b3a69d;
+  --line: #30373c;
+  --brand: #e1a070;
+  --brand-strong: #f1bb91;
+  --mint: #d5a07a;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+button, a, input, textarea, select { outline-color: var(--brand); }
+
+::selection { background: color-mix(in srgb, var(--brand) 28%, transparent); }
+
+.card {
+  min-width: 0;
+  max-width: 100%;
+  background: color-mix(in srgb, var(--card) 96%, transparent);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  box-shadow: 0 18px 55px rgba(88, 54, 34, 0.08);
+  transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+.dark .card { box-shadow: 0 18px 55px rgba(0, 0, 0, 0.16); }
+
+@media (max-width: 639px) {
+  main > section.grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.mesh-bg {
+  background-image:
+    radial-gradient(circle at 12% 12%, color-mix(in srgb, var(--brand) 20%, transparent) 0, transparent 34%),
+    radial-gradient(circle at 88% 10%, color-mix(in srgb, var(--mint) 22%, transparent) 0, transparent 28%),
+    linear-gradient(var(--background), var(--background));
+}
+
+.dot-grid {
+  background-image: radial-gradient(color-mix(in srgb, var(--foreground) 12%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.text-balance { text-wrap: balance; }
+
+/* A small shared motion language: reveal hierarchy, confirm progress, and keep
+   interactive surfaces feeling responsive without turning study into a light show. */
+@keyframes page-rise {
+  from { opacity: 0; transform: translateY(14px) scale(.992); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialog-pop {
+  from { opacity: 0; transform: translateY(18px) scale(.975); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes drawer-in {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes progress-reveal {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes progress-glint {
+  from { transform: translateX(-140%); }
+  to { transform: translateX(260%); }
+}
+
+@keyframes active-node-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand) 34%, transparent), 0 8px 20px rgba(0, 0, 0, .12); }
+  50% { box-shadow: 0 0 0 9px color-mix(in srgb, var(--brand) 0%, transparent), 0 10px 26px rgba(0, 0, 0, .16); }
+}
+
+@keyframes interviewer-breathe {
+  0%, 100% { transform: scale(1.015) translateY(0); }
+  50% { transform: scale(1.035) translateY(-3px); }
+}
+
+@keyframes interviewer-speak {
+  0%, 100% { transform: scale(1.025) translateY(0); filter: saturate(1); }
+  35% { transform: scale(1.045) translateY(-2px); filter: saturate(1.1); }
+  70% { transform: scale(1.035) translateY(1px); filter: saturate(1.04); }
+}
+
+@keyframes voice-glow {
+  0%, 100% { opacity: .22; transform: scale(.96); }
+  50% { opacity: .55; transform: scale(1.04); }
+}
+
+@keyframes equalizer-bounce {
+  0%, 100% { height: 4px; opacity: .6; }
+  50% { height: 13px; opacity: 1; }
+}
+
+@keyframes self-view-in {
+  from { opacity: 0; transform: translateY(8px) scale(.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.app-page > * {
+  animation: page-rise 520ms cubic-bezier(.22, 1, .36, 1) backwards;
+}
+
+.app-page > :nth-child(2) { animation-delay: 55ms; }
+.app-page > :nth-child(3) { animation-delay: 100ms; }
+.app-page > :nth-child(4) { animation-delay: 140ms; }
+.app-page > :nth-child(5) { animation-delay: 175ms; }
+.app-page > :nth-child(6) { animation-delay: 205ms; }
+.app-page > :nth-child(7) { animation-delay: 230ms; }
+.app-page > :nth-child(n + 8) { animation-delay: 250ms; }
+
+.motion-backdrop { animation: backdrop-in 180ms ease-out backwards; }
+.motion-dialog { animation: dialog-pop 360ms cubic-bezier(.22, 1, .36, 1) backwards; }
+.motion-drawer { animation: drawer-in 300ms cubic-bezier(.22, 1, .36, 1) backwards; }
+
+/* Existing feature dialogs share this overlay shape, so new and older modules
+   receive the same entrance without each workflow owning animation logic. */
+.fixed.inset-0.backdrop-blur-sm { animation: backdrop-in 180ms ease-out backwards; }
+.fixed.inset-0.backdrop-blur-sm > :is(div, form) {
+  animation: dialog-pop 360ms cubic-bezier(.22, 1, .36, 1) backwards;
+}
+
+.progress-indicator {
+  position: relative;
+  overflow: hidden;
+  transform-origin: left center;
+  animation: progress-reveal 700ms cubic-bezier(.22, 1, .36, 1) backwards;
+}
+
+.progress-indicator::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 38%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .38), transparent);
+  animation: progress-glint 900ms 420ms ease-out both;
+}
+
+.roadmap-active-node { animation: active-node-pulse 2.6s ease-out infinite; }
+
+.voice-avatar-image {
+  transform-origin: 50% 28%;
+  animation: interviewer-breathe 5.5s ease-in-out infinite;
+  will-change: transform, filter;
+}
+
+.voice-frame[data-voice-status="speaking"] .voice-avatar-image {
+  animation: interviewer-speak 1.35s ease-in-out infinite;
+}
+
+.voice-ambient-glow {
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--brand) 20%, transparent) 0, transparent 34%),
+    linear-gradient(110deg, transparent 25%, rgba(70, 112, 255, .1) 50%, transparent 75%);
+  mix-blend-mode: screen;
+  opacity: .22;
+}
+
+.voice-frame[data-voice-status="speaking"] .voice-ambient-glow,
+.voice-frame[data-voice-status="listening"] .voice-ambient-glow {
+  animation: voice-glow 2.2s ease-in-out infinite;
+}
+
+.voice-self-view { animation: self-view-in 320ms cubic-bezier(.22, 1, .36, 1) backwards; }
+
+.voice-equalizer {
+  display: inline-flex;
+  height: 14px;
+  align-items: center;
+  gap: 2px;
+}
+
+.voice-equalizer > span {
+  width: 2px;
+  height: 4px;
+  border-radius: 999px;
+  background: currentColor;
+  animation: equalizer-bounce .72s ease-in-out infinite;
+}
+
+.voice-equalizer > span:nth-child(2) { animation-delay: 120ms; }
+.voice-equalizer > span:nth-child(3) { animation-delay: 240ms; }
+.voice-equalizer > span:nth-child(4) { animation-delay: 360ms; }
+
+.nav-active { position: relative; overflow: hidden; }
+.nav-active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 22%, rgba(255, 255, 255, .16) 45%, transparent 68%);
+  transform: translateX(-120%);
+  animation: progress-glint 700ms 120ms ease-out both;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    border-color: color-mix(in srgb, var(--brand) 34%, var(--line));
+    box-shadow: 0 22px 65px rgba(88, 54, 34, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .dark .card:hover { box-shadow: 0 22px 65px rgba(0, 0, 0, .24); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: .45; transform: scale(1); }
+  50% { opacity: .85; transform: scale(1.06); }
+}
+
+.animate-pulse-soft { animation: pulse-soft 3s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
