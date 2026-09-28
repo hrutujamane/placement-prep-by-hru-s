@@ -38,6 +38,7 @@ The current build includes a complete credential-free demo experience and produc
 - Company-specific PDF/DOCX or PNG/JPG/WebP resume upload that reads content privately in the background, uses bundled English OCR for images, inspects document structure, applies a deterministic role-alignment rubric, suggests truthful wording and saves chosen versions
 - Resume version tracker with per-company score changes, supplied-job keyword gaps and export-ready portfolio content
 - Application tracker with validated official apply links, five monitored public company feeds, duplicate-safe tracking, foreground browser alerts, pipeline statuses and First 90 Days mode after an offer
+- A protected administrator view for the designated owner account, showing real Supabase Auth account creation and latest sign-in records without exposing passwords, tokens or private student content
 - Explainable Placement Readiness and Interview Readiness scores based on stored progress—not hiring probability
 - Normalized Supabase PostgreSQL schema with indexes, triggers, ownership policies and RLS
 - Server-side OpenAI Responses API with strict Structured Outputs, caching and request throttling
@@ -100,6 +101,7 @@ app/
   journey/                   Unified My Engineering Journey
   interview/                 Confidence-first interview prep
   jobs/                      Application tracker
+  admin/                     Protected account activity view
   onboarding/                Multi-step profile onboarding
   projects/                  Project Builder
   projects/[id]/             Evidence and implementation workspace
@@ -150,7 +152,7 @@ npm.cmd run dev
 | `NEXT_PUBLIC_USE_MOCK_SERVICES` | Browser-safe | `true` enables the credential-free demo adapter |
 | `SUPABASE_URL` | Server | Supabase project URL for token validation |
 | `SUPABASE_ANON_KEY` | Server | Anonymous key for server token validation |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server secret | Privileged maintenance jobs only; never use in browser code |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server secret | Required for the protected `/admin` account list; never use in browser code |
 | `OPENAI_API_KEY` | Server secret | Responses and GPT-Live API calls |
 | `OPENAI_REASONING_MODEL` | Server | Defaults to `gpt-6-astra` |
 | `OPENAI_LIVE_MODEL` | Server | Defaults to `gpt-live-1` |
@@ -166,6 +168,12 @@ npm.cmd run dev
 5. Keep the service-role key only in server-side environment configuration.
 6. Configure the site URL and allowed redirect URLs for local development and the production domain.
 7. Set `NEXT_PUBLIC_USE_MOCK_SERVICES=false` after validating signup, email confirmation and password reset.
+
+### Administrator account activity
+
+The `/admin` view is restricted on both the screen and API to `hrutujamane492@gmail.com`. Sign in through a real Supabase account using that email, then open **Admin** in the sidebar. It shows only the account email, optional profile name, account-created time, email-confirmation state and the latest sign-in timestamp supplied by Supabase Auth.
+
+For it to work, set `NEXT_PUBLIC_USE_MOCK_SERVICES=false`, configure the Supabase public variables, and add `SUPABASE_SERVICE_ROLE_KEY` only in `.env.local` and Vercel's server environment settings. Demo accounts are intentionally not listed because demo data is stored only in each browser. The service-role key is never sent to the browser.
 
 The migrations create all product tables, timestamps, foreign keys, indexes, update triggers, a profile-on-signup trigger, RLS policies, atomic roadmap persistence, task status history, adaptive interview-session persistence, confidence logs, and server-side validation. The connected-journey migration adds equipment, build preferences, reviewed templates, evidence/reviews, role explorations, reversible plan adjustments, explicit mentor authorization and integration permission records. The resume tracker extends `resume_versions` with company, application, source filename, transparent role-alignment score and review-source fields. Evidence files use a private owner-scoped Storage bucket with MIME and size limits. User-owned rows require `auth.uid() = user_id`; profiles require `auth.uid() = id`. Shared reviewed catalogs are read-only for authenticated users.
 

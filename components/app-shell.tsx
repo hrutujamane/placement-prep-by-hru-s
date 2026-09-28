@@ -22,6 +22,7 @@ import {
   Route,
   Sparkles,
   Sun,
+  ShieldCheck,
   UserRound,
   X,
 } from "lucide-react";
@@ -61,7 +62,8 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { state, logout, mockMode, theme, toggleTheme } = useApp();
+  const { state, logout, mockMode, theme, toggleTheme, isAdmin } = useApp();
+  const visibleNavItems = isAdmin ? [...navItems, { href: "/admin", label: "Admin", icon: ShieldCheck }] : navItems;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -74,7 +76,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
         {collapsed && <button onClick={() => setCollapsed(false)} className="mx-auto mb-4 rounded-lg p-2 text-[var(--muted)] hover:bg-slate-500/10" aria-label="Expand navigation"><ChevronRight className="size-4" /></button>}
         <nav className="space-y-1" aria-label="Primary navigation">
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return <Link key={item.href} href={item.href} title={collapsed ? item.label : undefined} aria-current={active ? "page" : undefined} className={cn("flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition", active ? "nav-active bg-[var(--brand)] text-white shadow-md shadow-violet-500/15" : "text-[var(--muted)] hover:bg-slate-500/8 hover:text-[var(--foreground)]", collapsed && "justify-center px-0")}>
@@ -101,7 +103,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <button className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} aria-label="Close navigation overlay" />
         <aside className="motion-drawer absolute inset-y-0 left-0 w-[86%] max-w-sm border-r border-[var(--line)] bg-[var(--card)] p-4 shadow-2xl">
           <div className="mb-5 flex items-center justify-between"><BrandMark /><button onClick={() => setMobileOpen(false)} className="rounded-lg p-2" aria-label="Close navigation"><X className="size-5" /></button></div>
-          <nav className="space-y-1" aria-label="Primary navigation">{navItems.map((item) => { const Icon = item.icon; const active = pathname === item.href || pathname.startsWith(`${item.href}/`); return <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} aria-current={active ? "page" : undefined} className={cn("flex h-12 items-center gap-3 rounded-xl px-3 text-sm font-medium", active ? "nav-active bg-[var(--brand)] text-white" : "text-[var(--muted)]")}><Icon className="size-[18px]" />{item.label}</Link>; })}</nav>
+          <nav className="space-y-1" aria-label="Primary navigation">{visibleNavItems.map((item) => { const Icon = item.icon; const active = pathname === item.href || pathname.startsWith(`${item.href}/`); return <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} aria-current={active ? "page" : undefined} className={cn("flex h-12 items-center gap-3 rounded-xl px-3 text-sm font-medium", active ? "nav-active bg-[var(--brand)] text-white" : "text-[var(--muted)]")}><Icon className="size-[18px]" />{item.label}</Link>; })}</nav>
           <Button variant="secondary" className="mt-6 w-full" onClick={toggleTheme}>{theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}{theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}</Button>
           <Button variant="secondary" className="mt-2 w-full" onClick={() => void logout()}><LogOut className="size-4" />Log out</Button>
         </aside>

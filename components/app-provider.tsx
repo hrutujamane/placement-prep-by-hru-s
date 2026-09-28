@@ -12,6 +12,7 @@ import { advanceInterviewProgram, createInitialInterviewProgram } from "@/lib/in
 import { normalizePrepJourneys, syncJourneyTasks, upsertPrimaryJourney } from "@/lib/prep-history";
 import type { BuildPreferences, DemoState, EquipmentItem, EvidenceSubmission, InterviewSessionRecord, JobApplication, PlanAdjustment, Profile, Project, ResumeReview, RoadmapPlan, RoleExplorationAttempt, TaskStatus } from "@/lib/types";
 import { uid } from "@/lib/utils";
+import { isAdminEmail } from "@/lib/admin";
 
 const STORAGE_KEY = "placement-prep-by-hrus-state-v1";
 const SESSION_KEY = "placement-prep-by-hrus-session-v1";
@@ -22,6 +23,7 @@ interface AppContextValue {
   authenticated: boolean;
   loading: boolean;
   mockMode: boolean;
+  isAdmin: boolean;
   theme: "light" | "dark";
   persistenceStatus: "saved" | "saving" | "error";
   persistenceError: string;
@@ -56,6 +58,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [state, setState] = useState<DemoState>(initialDemoState);
   const [authenticated, setAuthenticated] = useState(false);
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [persistenceStatus, setPersistenceStatus] = useState<"saved" | "saving" | "error">("saved");
@@ -79,6 +82,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           const supabase = createSupabaseBrowserClient();
           const { data } = await supabase!.auth.getSession();
           sessionActive = Boolean(data.session);
+          setCurrentUserEmail(data.session?.user.email ?? null);
           if (data.session) {
             const [profile, roadmap, prepJourneys, interview, resumeReviews] = await Promise.all([loadProfileFromSupabase(nextState.profile), loadActiveRoadmapFromSupabase(), loadRoadmapHistoryFromSupabase(), loadInterviewProgressFromSupabase(), loadResumeReviewsFromSupabase()]);
             nextState = {
@@ -130,8 +134,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (!email || password.length < 6) throw new Error("Enter a valid email and a password of at least 6 characters.");
     if (!mockMode) {
       const supabase = createSupabaseBrowserClient();
-      const { error } = await supabase!.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase!.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      setCurrentUserEmail(data.user?.email ?? null);
     }
     activateSession();
     router.push("/dashboard");
@@ -142,8 +147,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (!email || password.length < 8) throw new Error("Use a valid email and at least 8 characters for the password.");
     if (!mockMode) {
       const supabase = createSupabaseBrowserClient();
-      const { error } = await supabase!.auth.signUp({ email, password, options: { data: { name } } });
+      const { data, error } = await supabase!.auth.signUp({ email, password, options: { data: { name } } });
       if (error) throw error;
+      setCurrentUserEmail(data.user?.email ?? null);
     }
     persist((current) => ({ ...current, profile: { ...current.profile, name, email, onboardingComplete: false } }));
     activateSession();
@@ -161,6 +167,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (!mockMode) await createSupabaseBrowserClient()?.auth.signOut();
     window.localStorage.removeItem(SESSION_KEY);
     setAuthenticated(false);
+    setCurrentUserEmail(null);
     router.push("/login");
   }, [mockMode, router]);
 
@@ -325,6 +332,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     authenticated,
     loading,
     mockMode,
+    isAdmin: !mockMode && isAdminEmail(currentUserEmail),
     theme,
     persistenceStatus,
     persistenceError,
@@ -359,7 +367,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(initialDemoState));
       setState(initialDemoState);
     },
-  }), [applyPlanAdjustment, authenticated, completeInterviewSession, continueDemo, createRoadmap, loading, login, logout, mockMode, persistenceError, persistenceStatus, persist, retryRoadmapSync, saveProfile, saveResumeReview, signup, state, submitEvidence, theme, undoPlanAdjustment, updateTask]);
+  }), [applyPlanAdjustment, authenticated, completeInterviewSession, continueDemo, createRoadmap, currentUserEmail, loading, login, logout, mockMode, persistenceError, persistenceStatus, persist, retryRoadmapSync, saveProfile, saveResumeReview, signup, state, submitEvidence, theme, undoPlanAdjustment, updateTask]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
