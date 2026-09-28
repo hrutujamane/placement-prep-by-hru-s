@@ -39,6 +39,7 @@ The current build includes a complete credential-free demo experience and produc
 - Resume version tracker with per-company score changes, supplied-job keyword gaps and export-ready portfolio content
 - Application tracker with validated official apply links, five monitored public company feeds, duplicate-safe tracking, foreground browser alerts, pipeline statuses and First 90 Days mode after an offer
 - A protected administrator view for the designated owner account, showing real Supabase Auth account creation and latest sign-in records without exposing passwords, tokens or private student content
+- Student support reporting: students can describe a problem from their current page, while the administrator sees the original report, category, status and follow-up note
 - Explainable Placement Readiness and Interview Readiness scores based on stored progress—not hiring probability
 - Normalized Supabase PostgreSQL schema with indexes, triggers, ownership policies and RLS
 - Server-side OpenAI Responses API with strict Structured Outputs, caching and request throttling
@@ -171,9 +172,9 @@ npm.cmd run dev
 
 ### Administrator account activity
 
-The `/admin` view is restricted on both the screen and API to `hrutujamane492@gmail.com`. Sign in through a real Supabase account using that email, then open **Admin** in the sidebar. It shows only the account email, optional profile name, account-created time, email-confirmation state and the latest sign-in timestamp supplied by Supabase Auth.
+The `/admin` view is restricted on both the screen and API to `hrutujamane492@gmail.com`. Sign in through a real Supabase account using that email, then open **Admin** in the sidebar. It shows only the account email, optional profile name, account-created time, email-confirmation state and the latest sign-in timestamp supplied by Supabase Auth. It also shows student-authored support reports, their category, the page where the report was submitted and a transparent Open / In review / Resolved workflow.
 
-For it to work, set `NEXT_PUBLIC_USE_MOCK_SERVICES=false`, configure the Supabase public variables, and add `SUPABASE_SERVICE_ROLE_KEY` only in `.env.local` and Vercel's server environment settings. Demo accounts are intentionally not listed because demo data is stored only in each browser. The service-role key is never sent to the browser.
+For it to work, run the newest migration (`202609280006_student_reports.sql`) in Supabase, set `NEXT_PUBLIC_USE_MOCK_SERVICES=false`, configure the Supabase public variables, and add `SUPABASE_SERVICE_ROLE_KEY` only in `.env.local` and Vercel's server environment settings. Students can submit reports from the **Report a problem** button in the live-app sidebar. Demo accounts and demo reports are intentionally not listed because demo data is stored only in each browser. The service-role key is never sent to the browser.
 
 The migrations create all product tables, timestamps, foreign keys, indexes, update triggers, a profile-on-signup trigger, RLS policies, atomic roadmap persistence, task status history, adaptive interview-session persistence, confidence logs, and server-side validation. The connected-journey migration adds equipment, build preferences, reviewed templates, evidence/reviews, role explorations, reversible plan adjustments, explicit mentor authorization and integration permission records. The resume tracker extends `resume_versions` with company, application, source filename, transparent role-alignment score and review-source fields. Evidence files use a private owner-scoped Storage bucket with MIME and size limits. User-owned rows require `auth.uid() = user_id`; profiles require `auth.uid() = id`. Shared reviewed catalogs are read-only for authenticated users.
 

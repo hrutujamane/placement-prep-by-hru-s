@@ -29,6 +29,7 @@ import {
 import { useApp } from "@/components/app-provider";
 import { BrandMark } from "@/components/brand-mark";
 import { OpportunityAlert } from "@/components/opportunity-alert";
+import { ReportIssueButton } from "@/components/report-issue-button";
 import { Badge, Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
@@ -86,6 +87,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </nav>
         <div className="mt-auto space-y-2">
           {!collapsed && <div className="rounded-xl border border-[var(--line)] bg-slate-500/5 p-3"><div className="flex items-center gap-2 text-xs font-semibold"><Sparkles className="size-3.5 text-[var(--brand)]" />AI Career OS</div><p className="mt-1 text-[11px] leading-4 text-[var(--muted)]">{mockMode ? "Demo services active" : "OpenAI + Supabase connected"}</p></div>}
+          {!mockMode && !collapsed && <ReportIssueButton pagePath={pathname} />}
           <button onClick={toggleTheme} className={cn("flex h-10 w-full items-center gap-3 rounded-xl px-3 text-sm text-[var(--muted)] hover:bg-slate-500/8", collapsed && "justify-center px-0")} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} title={collapsed ? (theme === "dark" ? "Light mode" : "Dark mode") : undefined}>{theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}{!collapsed && (theme === "dark" ? "Light mode" : "Dark mode")}</button>
           <button onClick={() => void logout()} className={cn("flex h-10 w-full items-center gap-3 rounded-xl px-3 text-sm text-[var(--muted)] hover:bg-rose-500/8 hover:text-rose-500", collapsed && "justify-center px-0")} aria-label="Log out"><LogOut className="size-4" />{!collapsed && "Log out"}</button>
         </div>
@@ -105,6 +107,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <aside className="motion-drawer absolute inset-y-0 left-0 w-[86%] max-w-sm border-r border-[var(--line)] bg-[var(--card)] p-4 shadow-2xl">
           <div className="mb-5 flex items-center justify-between"><BrandMark /><button onClick={() => setMobileOpen(false)} className="rounded-lg p-2" aria-label="Close navigation"><X className="size-5" /></button></div>
           <nav className="space-y-1" aria-label="Primary navigation">{visibleNavItems.map((item) => { const Icon = item.icon; const active = pathname === item.href || pathname.startsWith(`${item.href}/`); return <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} aria-current={active ? "page" : undefined} className={cn("flex h-12 items-center gap-3 rounded-xl px-3 text-sm font-medium", active ? "nav-active bg-[var(--brand)] text-white" : "text-[var(--muted)]")}><Icon className="size-[18px]" />{item.label}</Link>; })}</nav>
+          {!mockMode && <div className="mt-4"><ReportIssueButton pagePath={pathname} /></div>}
           <Button variant="secondary" className="mt-6 w-full" onClick={toggleTheme}>{theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}{theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}</Button>
           <Button variant="secondary" className="mt-2 w-full" onClick={() => void logout()}><LogOut className="size-4" />Log out</Button>
         </aside>
